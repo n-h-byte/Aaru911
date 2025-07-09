@@ -69,10 +69,18 @@ async def helper_cb(client, CallbackQuery, _):
 
     # Helper to return keyboard with correct page
     def get_keyboard_for(cb):
-        if cb in ["hb1", "hb2", "hb3", "hb4", "hb5", "hb6", "hb7", "hb8", "hb9", "hb10"]:
-            return help_back_markup(_, page=1)
-        else:
-            return help_back_markup(_, page=2)
+    mapping = {
+        1: ["hb1", "hb2", "hb3", "hb4", "hb5", "hb6", "hb7", "hb8", "hb9", "hb10"],
+        2: ["hb11", "hb12", "hb13", "hb14", "hb15", "hb17", "hb18", "hb19", "hb20", "hb21"],
+        3: ["hb22", "hb23", "hb24", "hb25", "hb26", "hb27", "hb28", "hb29", "hb30", "hb31"],
+        4: ["hb32", "hb33"]
+    }
+
+    for page, buttons in mapping.items():
+        if cb in buttons:
+            return help_back_markup(_, page=page)
+
+    return help_back_markup(_, page=1)  # fallback
 
     if cb == "hb1":
         await CallbackQuery.edit_message_text(helpers.HELP_1, reply_markup=get_keyboard_for(cb))
