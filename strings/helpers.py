@@ -273,3 +273,6 @@ Commands:
 
 HELP_32 = """ **BOT LIST**
 * /bots - Get a list of bots in the group. """
+
+HELP_33 = """ **Markdown Help**
+* /markdownhelp - Help about Markdown """
