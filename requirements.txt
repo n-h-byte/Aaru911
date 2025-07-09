@@ -16,7 +16,7 @@ opencv-python
 pillow==9.5.0
 psutil
 py-tgcalls==0.9.7
-ntgcalls==1.1.2
+ntgcalls==2.0.5
 pykeyboard
 python-dotenv
 pyyaml
