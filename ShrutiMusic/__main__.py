@@ -78,30 +78,32 @@ COMMANDS = [
     BotCommand("tmute", "⏱ Temp mute"),
     BotCommand("unmute", "🔊 Unmute"),
     BotCommand("zombies", "💀 Ban deleted accounts"),
-    BotCommand("report", "🚨 Report to admins")
+    BotCommand("report", "🚨 Report to admins"),
+    BotCommand("markdownhelp", "📖 Help about Markdown"),
+    BotCommand("tts", "🗣 Convert text to speech"),
+    BotCommand("givelink", "🔗 Get invite link for current chat"),
+    BotCommand("link", "🔗 Get invite link for specified group"),
+    BotCommand("fsub", "🔒 Set/disable force subscription"),
+    BotCommand("info", "ℹ️ Get detailed user information"),
+    BotCommand("userinfo", "ℹ️ Get user information (alias)"),
+    BotCommand("downloadrepo", "📥 Download GitHub repository"),
+    BotCommand("truth", "🤔 Get random truth question"),
+    BotCommand("dare", "💪 Get random dare challenge"),
+    BotCommand("mongochk", "🗃 Check MongoDB URL validity"),
+    BotCommand("font", "🎨 Convert text to beautiful fonts"),
+    BotCommand("gali", "😤 Send random gali"),
+    BotCommand("bots", "🤖 Get list of bots in group")
 ]
 
-# Bot Bio and About
-BOT_BIO = "ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ʙᴏᴛ ғᴏʀ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴀɴᴅ ᴄʜᴀɴɴᴇʟ\n➻ sᴜᴘᴘᴏʀᴛ - 🔹 @ShrutiBots 🔹"
-BOT_ABOUT = "🎧 This is a Powerful Telegram Music Bot for Group and Channel Streaming.\n🔹 Support: @ShrutiBots"
-
 async def setup_bot_commands():
-    """Setup bot commands, bio and about once during startup"""
+    """Setup bot commands during startup"""
     try:
         # Set bot commands
         await app.set_bot_commands(COMMANDS)
         LOGGER("ShrutiMusic").info("Bot commands set successfully!")
         
-        # Set bot bio (short description)
-        await app.set_my_short_description(short_description=BOT_BIO)
-        LOGGER("ShrutiMusic").info("Bot bio set successfully!")
-        
-        # Set bot about (description)
-        await app.set_my_description(description=BOT_ABOUT)
-        LOGGER("ShrutiMusic").info("Bot about set successfully!")
-        
     except Exception as e:
-        LOGGER("ShrutiMusic").error(f"Failed to set bot commands/bio: {str(e)}")
+        LOGGER("ShrutiMusic").error(f"Failed to set bot commands: {str(e)}")
 
 async def init():
     if (
@@ -128,7 +130,7 @@ async def init():
 
     await app.start()
     
-    # Setup bot commands, bio and about once during startup
+    # Setup bot commands during startup
     await setup_bot_commands()
 
     for all_module in ALL_MODULES:
