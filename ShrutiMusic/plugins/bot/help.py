@@ -69,22 +69,23 @@ async def helper_cb(client, CallbackQuery, _):
 
     # Helper to return keyboard with correct page
     def get_keyboard_for(cb):
-    page1 = ["hb1", "hb2", "hb3", "hb4", "hb5", "hb6", "hb7", "hb8", "hb9", "hb10"]
-    page2 = ["hb11", "hb12", "hb13", "hb14", "hb15", "hb17", "hb18", "hb19", "hb20", "hb21"]
-    page3 = ["hb22", "hb23", "hb24", "hb25", "hb26", "hb27", "hb28", "hb29", "hb30", "hb31"]
-    page4 = ["hb32", "hb33"]
+        page1 = ["hb1", "hb2", "hb3", "hb4", "hb5", "hb6", "hb7", "hb8", "hb9", "hb10"]
+        page2 = ["hb11", "hb12", "hb13", "hb14", "hb15", "hb17", "hb18", "hb19", "hb20", "hb21"]
+        page3 = ["hb22", "hb23", "hb24", "hb25", "hb26", "hb27", "hb28", "hb29", "hb30", "hb31"]
+        page4 = ["hb32", "hb33"]
 
-    if cb in page1:
-        return help_back_markup(_, page=1)
-    elif cb in page2:
-        return help_back_markup(_, page=2)
-    elif cb in page3:
-        return help_back_markup(_, page=3)
-    elif cb in page4:
-        return help_back_markup(_, page=4)
-    else:
-        return help_back_markup(_, page=1)  # fallback
+        if cb in page1:
+            return help_back_markup(_, page=1)
+        elif cb in page2:
+            return help_back_markup(_, page=2)
+        elif cb in page3:
+            return help_back_markup(_, page=3)
+        elif cb in page4:
+            return help_back_markup(_, page=4)
+        else:
+            return help_back_markup(_, page=1)  # fallback
 
+    # Show the correct help message based on callback
     if cb == "hb1":
         await CallbackQuery.edit_message_text(helpers.HELP_1, reply_markup=get_keyboard_for(cb))
     elif cb == "hb2":
