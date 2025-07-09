@@ -67,6 +67,32 @@ async def show_help_page2(client, callback_query: CallbackQuery):
         reply_markup=help_pannel_page2(_, START=True)
     )
 
+@app.on_callback_query(filters.regex("help_page_3"))
+async def show_help_page3(client, callback_query: CallbackQuery):
+    try:
+        language = await get_lang(callback_query.message.chat.id)
+        _ = get_string(language)
+    except:
+        _ = get_string("en")
+
+    await callback_query.message.edit_caption(
+        caption=_["help_1"].format(SUPPORT_GROUP),
+        reply_markup=help_pannel_page3(_, START=True)
+    )
+
+@app.on_callback_query(filters.regex("help_page_4"))
+async def show_help_page4(client, callback_query: CallbackQuery):
+    try:
+        language = await get_lang(callback_query.message.chat.id)
+        _ = get_string(language)
+    except:
+        _ = get_string("en")
+
+    await callback_query.message.edit_caption(
+        caption=_["help_1"].format(SUPPORT_GROUP),
+        reply_markup=help_pannel_page4(_, START=True)
+    )
+
 
 @app.on_callback_query(filters.regex("ADMIN") & ~BANNED_USERS)
 @languageCB
