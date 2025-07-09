@@ -6,7 +6,8 @@ def start_panel(_):
     buttons = [
         [
             InlineKeyboardButton(
-                text=_["S_B_1"], url=f"https://t.me/{app.username}?startgroup=true"
+                text=_["S_B_1"],
+                url=f"https://t.me/{app.username}?startgroup=true"
             ),
             InlineKeyboardButton(text=_["S_B_2"], url=config.SUPPORT_GROUP),
         ],
@@ -17,6 +18,7 @@ def start_panel(_):
     ]
     return buttons
 
+
 def private_panel(_):
     buttons = [
         [
@@ -26,7 +28,10 @@ def private_panel(_):
             )
         ],
         [
-            InlineKeyboardButton(text="𝐃ᴇᴠᴇʟᴏᴘᴇʀ", url=config.OWNER_ID),
+            InlineKeyboardButton(
+                text="𝐃ᴇᴠᴇʟᴏᴘᴇʀ",
+                url=f"https://t.me/{config.OWNER_USERNAME}",
+            )
         ],
         [
             InlineKeyboardButton(text=_["S_B_6"], url=config.SUPPORT_CHANNEL),
