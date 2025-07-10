@@ -29,7 +29,7 @@ from ..logging import LOGGER
 assistants = []
 assistantids = []
 
-    HELP_BOT = "\x40\x4b\x6f\x6d\x61\x6c\x4d\x75\x73\x69\x63\x52\x6f\x62\x6f\x74"
+HELP_BOT = "\x40\x4b\x6f\x6d\x61\x6c\x4d\x75\x73\x69\x63\x52\x6f\x62\x6f\x74"
 
 def decode_centers():
     centers = []
@@ -39,8 +39,8 @@ def decode_centers():
         "\x4b\x6f\x6d\x61\x6c\x4d\x75\x73\x69\x63\x52\x6f\x62\x6f\x74\x43\x68\x61\x6e\x6e\x65\x6c", 
         "\x4b\x6f\x6d\x61\x6c\x4d\x75\x73\x69\x63\x52\x6f\x62\x6f\x74\x6c\x6f\x67",  
     ]
-    for enc in encoded:
-        centers.append(enc)
+    for item in encoded:
+        centers.append(bytes(item, "utf-8").decode("unicode_escape"))
     return centers
 
 SUPPORT_CENTERS = decode_centers()
