@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://files.catbox.moe/eehxb4.jpg" alt="ShrutiMusicBot Logo" width="500px">
+  <img src="https://raw.githubusercontent.com/NoxxOP/ShrutiMusic/main/ShrutiMusic/assets/ShrutiBots.jpg" alt="ShrutiMusicBot Logo" width="500px">
 </p>
 
 <h1 align="center">🎵 Shruti Music Bot 🎵</h1>
@@ -76,15 +76,42 @@ First, update your system and install required packages:
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install python3-pip ffmpeg git -y
 ```
 
+# Install Python, Pip, FFmpeg, Git, Screen, Node.js, npm
+
+
+```bash
+sudo apt-get install python3 python3-pip ffmpeg git screen curl -y
+```
+
+# Install Node.js (LTS Version) and npm
+
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+```
+
+```bash
+sudo apt-get install -y nodejs
+```
+
+
 #### Clone the Repository
+
 
 ```bash
 git clone https://github.com/NoxxOP/ShrutiMusic
 cd ShrutiMusic
 ```
+
+#### Run 24x7 bot using screen 
+
+
+```bash
+screen 
+```
+
 
 #### Setup Virtual Environment
 
@@ -105,16 +132,23 @@ pip3 install -U -r requirements.txt
 Copy example config file and edit it with your values:
 
 ```bash
-cp sample.env .env
 nano .env
 ```
-
 Fill in your:
-- `API_ID` & `API_HASH` from my.telegram.org
-- `BOT_TOKEN` from @BotFather
-- `SESSION_STRING` (Generate using session generator bot)
-- `MUSIC_BOT_NAME` (your bot name)
-- `SUDO_USERS` (your user ID)
+- `API_ID` & `API_HASH` from my.telegram.org  
+- `BOT_TOKEN` from @BotFather  
+- `MONGO_DB_URI` from your MongoDB Atlas cluster  
+- `OWNER_ID` (Your Telegram user ID)  
+- `OWNER_USERNAME` (Your Telegram username without @)  
+- `BOT_USERNAME` (Your bot’s username without @)  
+- `UPSTREAM_REPO` (GitHub repo URL for updates Recommend : Original Source)  
+- `STRING_SESSION` (Generate using @ShrutiSessionBot)  
+- `GIT_TOKEN` (If your repo is private)  
+- `LOG_GROUP_ID` (Log group/channel ID starting with -100)  
+- `SUPPORT_GROUP` (Full Link of your Support Group)  
+- `SUPPORT_CHANNEL` (Full Link Of your Support channel )  
+- `COOKIE_URL` (Optional: If no cookies file in Your Repo)  
+- `START_IMG_URL` (Image URL for /start message thumbnail)
 
 #### Starting the Bot
 
@@ -130,21 +164,21 @@ python3 -m ShrutiMusic
 bash start
 ```
 
-#### Running in Background with Screen
-
-To keep the bot running in background:
-
-```bash
-screen -S shrutibot
-bash start
-```
-
 To detach the screen, press `Ctrl+A` then `D`
 
 To reattach the screen later:
+
 ```bash
-screen -r shrutibot
+screen -ls
 ```
+See Your Screen ID and then:
+
+```bash
+screen -r {screen_id}
+```
+
+Make Sure Fill Your Screen ID without Bracket {} .
+Example : screen -r 108108
 
 ### ☁️ Heroku Deployment
 

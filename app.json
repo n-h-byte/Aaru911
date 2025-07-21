@@ -1,7 +1,7 @@
 {
   "name": "Shruti Music",
   "description": "A Telegram Music Player Bot, written in Python with Pyrogram and Py-Tgcalls.",
-  "logo": "https://files.catbox.moe/q65bhr.jpg",
+  "logo": "https://files.catbox.moe/v7hio8.jpg",
   "keywords": [
     "python3",
     "telegram",
@@ -85,6 +85,26 @@
     "SUPPORT_CHANNEL": {
       "description": "Your support channel username (without @)",
       "value": "https://t.me/ShrutiBots",
+      "required": false
+    },
+    "INSTAGRAM": {
+      "description": "Your Instagram profile link",
+      "value": "https://instagram.com/yaduwanshi_nand",
+      "required": false
+    },
+    "YOUTUBE": {
+      "description": "Your YouTube channel link",
+      "value": "https://youtube.com/@NandEditz",
+      "required": false
+    },
+    "GITHUB": {
+      "description": "Your GitHub profile link",
+      "value": "https://github.com/NoxxOP",
+      "required": false
+    },
+    "DONATE": {
+      "description": "Link where people can support/donate",
+      "value": "https://t.me/ShrutiBots/91",
       "required": false
     },
     "COOKIE_URL": {

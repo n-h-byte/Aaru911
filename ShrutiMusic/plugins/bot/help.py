@@ -94,7 +94,7 @@ async def helper_cb(client, CallbackQuery, _):
         page1 = ["hb1", "hb2", "hb3", "hb4", "hb5", "hb6", "hb7", "hb8", "hb9", "hb10"]
         page2 = ["hb11", "hb12", "hb13", "hb14", "hb15", "hb17", "hb18", "hb19", "hb20", "hb21"]
         page3 = ["hb22", "hb23", "hb24", "hb25", "hb26", "hb27", "hb28", "hb29", "hb30", "hb31"]
-        page4 = ["hb32", "hb33"]
+        page4 = ["hb32", "hb33", "hb34", "hb35"]
 
         if cb in page1:
             return help_back_markup(_, page=1)
@@ -174,3 +174,8 @@ async def helper_cb(client, CallbackQuery, _):
         await CallbackQuery.edit_message_text(helpers.HELP_32, reply_markup=get_keyboard_for(cb))
     elif cb == "hb33":
         await CallbackQuery.edit_message_text(helpers.HELP_33, reply_markup=get_keyboard_for(cb))
+    elif cb == "hb34":
+        await CallbackQuery.edit_message_text(helpers.HELP_34, reply_markup=get_keyboard_for(cb))
+    elif cb == "hb35":
+        await CallbackQuery.edit_message_text(helpers.HELP_35, reply_markup=get_keyboard_for(cb))
+

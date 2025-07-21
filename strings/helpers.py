@@ -238,63 +238,117 @@ HELP_21 = """
 /vid : ᴅᴏᴡɴʟᴏᴀᴅ ᴀɴʏ ɪɴsᴛᴀ ᴛᴡɪᴛᴛᴇʀ ᴀɴᴅ ᴍᴏʀᴇ ᴘʟᴀᴛғᴏʀᴍs ᴠɪᴅᴇᴏ.
 """
 
-HELP_22 = """ **TEXT TO SPEECH BOT COMMAND**
-Use the /tts command to convert text into speech.
-* /tts <text>: Converts the given text to speech in Hindi.
-**Example:**
-* /tts Radhe Radhe
-**Note:** Make sure to provide some text after the /tts command. """
+# Copyright (c) 2025 Nand Yaduwanshi <NoxxOP>
 
-HELP_23 = """ **INVITE LINK COMMANDS**
-* /givelink: Get the invite link for the current chat.
-* /link group_id: Get information and generate an invite link for the specified group ID. """
+# 🎯 TEXT TO SPEECH COMMANDS
+HELP_22 = """ 🔊 <b>TEXT TO SPEECH</b> 🎤
 
-HELP_24 = """ **FORCE SUBSCRIPTION COMMANDS**
-* /fsub <channel username or id> - Set force subscription for this group.
-* /fsub off - Disable force subscription for this group. """
+• /tts &lt;text&gt;: Converts the given text to speech in Hindi 🇮🇳
+<b>Example:</b>
+• /tts Radhe Radhe 🙏
 
-HELP_25 = """ **ZOMBIE ACCOUNTS**
-* /zombies - Ban Deleted Accounts """
+<b>Note:</b> Make sure to provide some text after the /tts command ✨ """
 
-HELP_26 = """ **USER INFORMATION**
-* /info [user_id]: Get detailed information about a user.
-* /userinfo [user_id]: Alias for /info. """
+# 🔗 INVITE LINK COMMANDS  
+HELP_23 = """ 🔗 <b>INVITE LINK COMMANDS</b> 💫
 
-HELP_27 = """ **GITHUB REPOSITORY DOWNLOADER**
-Commands Help:
-1. /downloadrepo
-**Description:** Download and retrieve files from a GitHub repository.
-**Usage:** /downloadrepo [Repo_URL]
-**Details:**
-* Clones the specified GitHub repository.
-* Creates a zip file of the repository.
-* Sends the zip file back as a document.
-* If the download fails, an error message will be displayed.
-**Examples:**
-* /downloadrepo https://github.com/username/repository """
+• /givelink: Get the invite link for the current chat 📱
+• /link group_id: Get information and generate an invite link for the specified group ID 🆔 """
 
-HELP_28 = """ **TRUTH OR DARE BOT COMMANDS**
-Use these commands to play truth or dare:
-* /truth: Get a random truth question. Answer honestly!
-* /dare: Get a random dare challenge. Complete it if you dare!
-**Examples:**
-* /truth: "What is your most embarrassing moment?"
-* /dare: "Do 10 push-ups."
-**Note:** If you encounter any issues with fetching questions, please try again later. """
+# 🔒 FORCE SUBSCRIPTION COMMANDS
+HELP_24 = """ 🔒 <b>FORCE SUBSCRIPTION COMMANDS</b> 🎯
 
-HELP_29 = """ **MONGODB CHECKER**
-* /mongochk [mongo_url]: Checks the validity of a MongoDB URL and connection to the MongoDB instance. """
+• /fsub &lt;channel username or id&gt; - Set force subscription for this group 📢
+• /fsub off - Disable force subscription for this group ❌ """
 
-HELP_30 = """ **FONT CONVERTER**
-* /font [text] - Converts simple text to beautiful text by changing its font. """
+# 🧟 ZOMBIE ACCOUNTS
+HELP_25 = """ 🧟 <b>ZOMBIE ACCOUNTS</b> 💀
 
-HELP_31 = """ **GALI COMMANDS**
-Commands:
-* /gali - Send random gali (works in DM)
-* .gali - Alternative command format """
+• /zombies - Ban Deleted Accounts 🚫 """
 
-HELP_32 = """ **BOT LIST**
-* /bots - Get a list of bots in the group. """
+# 👤 USER INFORMATION
+HELP_26 = """ 👤 <b>USER INFORMATION</b> 📊
 
-HELP_33 = """ **Markdown Help**
-* /markdownhelp - Help about Markdown """
+• /info [user_id]: Get detailed information about a user 🔍
+• /userinfo [user_id]: Alias for /info 👥 """
+
+# 📁 GITHUB REPOSITORY DOWNLOADER
+HELP_27 = """ 📁 <b>GITHUB REPOSITORY DOWNLOADER</b> 🐙
+
+<b>Commands Help:</b> 💻
+1. /downloadrepo 📥
+
+<b>Description:</b> Download and retrieve files from a GitHub repository 🗂️
+<b>Usage:</b> /downloadrepo [Repo_URL] 🔗
+<b>Details:</b>
+• Clones the specified GitHub repository 📋
+• Creates a zip file of the repository 📦
+• Sends the zip file back as a document 📄
+• If the download fails, an error message will be displayed ⚠️
+
+<b>Examples:</b>
+• /downloadrepo https://github.com/username/repository 🌟 """
+
+# 🎲 TRUTH OR DARE BOT COMMANDS
+HELP_28 = """ 🎲 <b>TRUTH OR DARE BOT COMMANDS</b> 🎯
+
+Use these commands to play truth or dare: 🎮
+• /truth: Get a random truth question. Answer honestly! 💭
+• /dare: Get a random dare challenge. Complete it if you dare! 🔥
+
+<b>Examples:</b>
+• /truth: "What is your most embarrassing moment?" 😅
+• /dare: "Do 10 push-ups." 💪
+
+<b>Note:</b> If you encounter any issues with fetching questions, please try again later ⏰ """
+
+# 🍃 MONGODB CHECKER
+HELP_29 = """ 🍃 <b>MONGODB CHECKER</b> 🔍
+
+• /mongochk [mongo_url]: Checks the validity of a MongoDB URL and connection to the MongoDB instance 🗄️ """
+
+# 🔤 FONT CONVERTER
+HELP_30 = """ 🔤 <b>FONT CONVERTER</b> ✨
+
+• /font [text] - Converts simple text to beautiful text by changing its font 🎨 """
+
+# 🤬 GALI COMMANDS
+HELP_31 = """ 🤬 <b>GALI COMMANDS</b> 😤
+
+<b>Commands:</b>
+• /gali - Send random gali (works in DM) 💢
+• .gali - Alternative command format 🔥 """
+
+# 🤖 BOT LIST
+HELP_32 = """ 🤖 <b>BOT LIST</b> 🎯
+
+• /bots - Get a list of bots in the group 📋 """
+
+# 📝 MARKDOWN HELP
+HELP_33 = """ 📝 <b>MARKDOWN HELP</b> 📖
+
+• /markdownhelp - Help about Markdown 🔧 """
+
+# 🏷️ WISH TAG HELP
+HELP_34 = """ 🏷️ <b>WISH TAG HELP</b> 🌟
+
+<b>Good Morning:</b> 🌅
+• /gmtag - Start Good Morning tagging ☀️
+• /gmstop - Stop Good Morning tagging 🛑
+
+<b>Good Afternoon:</b> 🌞
+• /gatag - Start Good Afternoon tagging 🌤️
+• /gastop - Stop Good Afternoon tagging 🛑
+
+<b>Good Night:</b> 🌙
+• /gntag - Start Good Night tagging 🌜
+• /gnstop - Stop Good Night tagging 🛑
+
+<b>Utility:</b> ⚙️
+• /stopall - Stop all active tagging 🚫
+• /taghelp - Show this help message 📖
+
+<b>Note:</b> Only one tagging session can run per chat at a time 📌 """
+
+HELP_35 = """ <b>User Welcome Message</b>
+• /welcome on/off: Enable or Disable welcome message . """
