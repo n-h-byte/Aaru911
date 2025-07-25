@@ -65,11 +65,11 @@ GIT_TOKEN = os.getenv("GIT_TOKEN", None)
 
 SUPPORT_CHANNEL = os.getenv("SUPPORT_CHANNEL", "https://t.me/KomalBotsNetwork")
 SUPPORT_GROUP = os.getenv("SUPPORT_GROUP", "https://t.me/KomalMusicRobotSupport")
-INSTAGRAM = os.getenv("INSTAGRAM", "https://instagram.com/yaduwanshi_nand")
-YOUTUBE = os.getenv("YOUTUBE", "https://youtube.com/@NandEditz")
-GITHUB = os.getenv("GITHUB", "https://github.com/NoxxOP")
-DONATE = os.getenv("DONATE", "https://t.me/ShrutiBots/91")
-PRIVACY_LINK = os.getenv("PRIVACY_LINK", "https://graph.org/Privacy-Policy-05-01-30")
+INSTAGRAM = os.getenv("INSTAGRAM", "https://files.catbox.moe/2d32oj.mp4")
+YOUTUBE = os.getenv("YOUTUBE", "https://files.catbox.moe/2d32oj.mp4")
+GITHUB = os.getenv("GITHUB", "https://files.catbox.moe/2d32oj.mp4")
+DONATE = os.getenv("DONATE", "https://files.catbox.moe/2d32oj.mp4")
+PRIVACY_LINK = os.getenv("PRIVACY_LINK", "https://files.catbox.moe/2d32oj.mp4")
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ⏱️ Duration & Playlist Settings
