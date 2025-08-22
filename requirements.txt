@@ -12,6 +12,7 @@ httpx[http2]==0.25.2
 motor
 numpy
 opencv-python
+pytz
 pillow==9.5.0
 psutil
 py-tgcalls==0.9.7
@@ -23,6 +24,7 @@ requests
 speedtest-cli
 spotipy
 tgcrypto
+telegraph 
 unidecode
 uvloop
 yt-dlp
@@ -33,3 +35,4 @@ youtube-search-python
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+

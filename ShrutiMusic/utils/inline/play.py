@@ -189,3 +189,6 @@ def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 

@@ -63,3 +63,6 @@ for filename in os.listdir(r"./strings/langs/"):
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 

@@ -145,3 +145,6 @@ async def group_assistant(self, chat_id: int) -> int:
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 

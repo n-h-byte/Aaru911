@@ -214,3 +214,6 @@ Note: This command is restricted in groups to maintain decorum.
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 

@@ -29,6 +29,7 @@ from .inline import *
 from .pastebin import *
 from .sys import *
 from .error import *
+from .couple import *
 
 
 # ©️ Copyright Reserved - @NoxxOP  Nand Yaduwanshi
@@ -38,3 +39,6 @@ from .error import *
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 

@@ -48,3 +48,6 @@ __all__ = ALL_MODULES + ["ALL_MODULES"]
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 

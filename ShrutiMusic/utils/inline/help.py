@@ -135,7 +135,13 @@ def help_pannel_page4(_, START: Union[bool, int] = None):
             [
                 InlineKeyboardButton(text=_["H_B_34"], callback_data="help_callback hb34"),
                 InlineKeyboardButton(text=_["H_B_35"], callback_data="help_callback hb35"),
-            ],   
+            ],
+            [
+                InlineKeyboardButton(text=_["H_B_36"], callback_data="help_callback hb36"),
+            ],
+            [
+                InlineKeyboardButton(text=_["H_B_37"], callback_data="help_callback hb37"),
+            ],
             [
                 InlineKeyboardButton(
                     text=_["BACK_BUTTON"] if START else _["CLOSE_BUTTON"],
@@ -177,3 +183,6 @@ def private_help_panel(_):
 # 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
 # 📢 Telegram Channel : https://t.me/ShrutiBots
 # ===========================================
+
+
+# ❤️ Love From ShrutiBots 
