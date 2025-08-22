@@ -11,6 +11,7 @@ import re
 import math
 import aiofiles
 import aiohttp
+import traceback
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from youtubesearchpython.__future__ import Video
 
@@ -229,10 +230,14 @@ class PremiumThumbnailGenerator:
                 return cache_path
 
             # ✅ Get video info directly by ID
-            video_data = (await Video.getInfo(videoid))["video"]
+            video_info = await Video.getInfo(videoid)
+            if not video_info or "video" not in video_info:
+                raise ValueError(f"Could not fetch video info for {videoid}")
+
+            video_data = video_info["video"]
 
             title = re.sub(r"\W+", " ", video_data.get("title", "Untitled")).title()
-            duration = video_data.get("duration", "Live")
+            duration = str(video_data.get("duration", "Live"))
             thumbnail_url = video_data["thumbnails"][0]["url"].split("?")[0]
             views = video_data.get("viewCount", {}).get("short", "Unknown Views")
             channel = video_data.get("channel", {}).get("name", "Unknown Channel")
@@ -316,6 +321,7 @@ class PremiumThumbnailGenerator:
 
             background = self.create_premium_ui_elements(background, accent_color)
 
+            # ✅ Ensure RGBA before alpha_composite
             noise = Image.new('RGBA', (self.canvas_width, self.canvas_height), (0, 0, 0, 0))
             noise_pixels = []
             for _ in range(self.canvas_width * self.canvas_height):
@@ -325,7 +331,7 @@ class PremiumThumbnailGenerator:
                 else:
                     noise_pixels.append((0, 0, 0, 0))
             noise.putdata(noise_pixels)
-            background = Image.alpha_composite(background, noise)
+            background = Image.alpha_composite(background.convert("RGBA"), noise)
 
             background.save(cache_path, "PNG", quality=95)
             os.remove(temp_path)
@@ -334,6 +340,7 @@ class PremiumThumbnailGenerator:
 
         except Exception as e:
             logging.error(f"Error generating premium thumbnail for {videoid}: {e}")
+            logging.error(traceback.format_exc())
             return None
 
 # Main function
