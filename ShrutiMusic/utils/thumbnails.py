@@ -12,7 +12,7 @@ import math
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-from youtubesearchpython.__future__ import VideosSearch
+from youtubesearchpython.__future__ import Video
 
 logging.basicConfig(level=logging.INFO)
 
@@ -30,7 +30,7 @@ class PremiumThumbnailGenerator:
             'electric_violet': (143, 0, 255),
             'hot_pink': (255, 105, 180)
         }
-        
+
     def change_image_size(self, max_width, max_height, image):
         width_ratio = max_width / image.size[0]
         height_ratio = max_height / image.size[1]
@@ -40,15 +40,14 @@ class PremiumThumbnailGenerator:
         return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
     def smart_text_truncate(self, text, max_chars_per_line=35):
-        """Advanced text truncation with better word wrapping"""
         words = text.split(" ")
         lines = ["", ""]
         current_line = 0
-        
+
         for word in words:
             if current_line >= 2:
                 break
-                
+
             if len(lines[current_line]) + len(word) + 1 <= max_chars_per_line:
                 if lines[current_line]:
                     lines[current_line] += " " + word
@@ -58,118 +57,100 @@ class PremiumThumbnailGenerator:
                 current_line += 1
                 lines[current_line] = word
             else:
-                # Add ellipsis if text is too long
                 if len(lines[1]) > 30:
                     lines[1] = lines[1][:30] + "..."
                 break
-                
+
         return [line.strip() for line in lines if line.strip()]
 
     def generate_premium_gradient(self, width, height, colors, gradient_type="diagonal"):
-        """Create premium gradients with multiple color stops"""
         base = Image.new('RGBA', (width, height), colors[0])
-        
+
         if gradient_type == "diagonal":
-            # Diagonal gradient
             for i, color in enumerate(colors[1:], 1):
                 overlay = Image.new('RGBA', (width, height), color)
                 mask = Image.new('L', (width, height))
                 mask_data = []
-                
+
                 for y in range(height):
                     for x in range(width):
-                        # Diagonal gradient calculation
                         distance = (x + y) / (width + height)
                         alpha = int(255 * distance * (i / len(colors)))
                         alpha = max(0, min(255, alpha))
                         mask_data.append(alpha)
-                        
+
                 mask.putdata(mask_data)
                 base.paste(overlay, (0, 0), mask)
-                
+
         elif gradient_type == "radial":
-            # Radial gradient from center
             center_x, center_y = width // 2, height // 2
             max_distance = math.sqrt(center_x**2 + center_y**2)
-            
+
             for i, color in enumerate(colors[1:], 1):
                 overlay = Image.new('RGBA', (width, height), color)
                 mask = Image.new('L', (width, height))
                 mask_data = []
-                
+
                 for y in range(height):
                     for x in range(width):
                         distance = math.sqrt((x - center_x)**2 + (y - center_y)**2)
                         alpha = int(255 * (distance / max_distance) * (i / len(colors)))
                         alpha = max(0, min(255, alpha))
                         mask_data.append(alpha)
-                        
+
                 mask.putdata(mask_data)
                 base.paste(overlay, (0, 0), mask)
-                
+
         return base
 
     def create_glassmorphism_effect(self, width, height, base_color, blur_radius=30):
-        """Create modern glassmorphism background effect"""
         glass = Image.new('RGBA', (width, height), (*base_color[:3], 80))
         glass = glass.filter(ImageFilter.GaussianBlur(radius=blur_radius))
         return glass
 
     def create_neon_border_circle(self, img, output_size, border_width=8, glow_intensity=15):
-        """Create circular thumbnail with neon glow effect"""
-        # Resize and crop to square
         img = img.convert('RGBA')
         img = self.change_image_size(output_size, output_size, img)
-        
-        # Create circular mask
+
         mask = Image.new('L', (output_size, output_size), 0)
         draw = ImageDraw.Draw(mask)
         draw.ellipse((0, 0, output_size, output_size), fill=255)
-        
-        # Apply mask to image
+
         circular_img = Image.new('RGBA', (output_size, output_size), (0, 0, 0, 0))
         circular_img.paste(img, (0, 0), mask)
-        
-        # Create neon glow effect
+
         glow_size = output_size + (glow_intensity * 2)
         glow_canvas = Image.new('RGBA', (glow_size, glow_size), (0, 0, 0, 0))
-        
-        # Multiple glow layers for depth
+
         neon_color = random.choice(list(self.modern_colors.values()))
         for i in range(glow_intensity, 0, -2):
             glow_layer = Image.new('RGBA', (glow_size, glow_size), (0, 0, 0, 0))
             glow_draw = ImageDraw.Draw(glow_layer)
-            
+
             alpha = int(30 * (i / glow_intensity))
             glow_draw.ellipse(
-                (glow_intensity - i, glow_intensity - i, 
+                (glow_intensity - i, glow_intensity - i,
                  glow_size - glow_intensity + i, glow_size - glow_intensity + i),
                 fill=(*neon_color, alpha)
             )
             glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(radius=i))
             glow_canvas = Image.alpha_composite(glow_canvas, glow_layer)
-        
-        # Add main image
+
         glow_canvas.paste(circular_img, (glow_intensity, glow_intensity), circular_img)
-        
+
         return glow_canvas, neon_color
 
     def create_animated_progress_bar(self, draw, position, width, height, progress, accent_color):
-        """Create modern animated-style progress bar"""
         x, y = position
-        
-        # Background bar with rounded corners
         background_bar = Image.new('RGBA', (width + 20, height + 20), (0, 0, 0, 0))
         bg_draw = ImageDraw.Draw(background_bar)
-        
-        # Draw rounded rectangle background
+
         bg_draw.rounded_rectangle(
             (10, 10, width + 10, height + 10),
             radius=height // 2,
             fill=(40, 40, 40, 180)
         )
-        
-        # Progress fill with gradient effect
+
         if progress > 0:
             progress_width = int(width * progress)
             bg_draw.rounded_rectangle(
@@ -177,28 +158,23 @@ class PremiumThumbnailGenerator:
                 radius=height // 2,
                 fill=accent_color
             )
-            
-            # Add highlight effect
+
             highlight_height = height // 3
             bg_draw.rounded_rectangle(
                 (10, 10, progress_width + 10, 10 + highlight_height),
                 radius=height // 4,
                 fill=tuple(min(255, c + 50) for c in accent_color)
             )
-        
+
         return background_bar
 
-    def draw_text_with_advanced_shadow(self, background, position, text, font, fill_color, 
-                                     shadow_color=(0, 0, 0), shadow_offset=(4, 4), 
+    def draw_text_with_advanced_shadow(self, background, position, text, font, fill_color,
+                                     shadow_color=(0, 0, 0), shadow_offset=(4, 4),
                                      glow_color=None, glow_radius=0):
-        """Advanced text rendering with multiple shadow effects"""
         x, y = position
-        
-        # Create text layer
         text_layer = Image.new('RGBA', background.size, (0, 0, 0, 0))
         text_draw = ImageDraw.Draw(text_layer)
-        
-        # Add glow effect if specified
+
         if glow_color and glow_radius > 0:
             for offset_x in range(-glow_radius, glow_radius + 1):
                 for offset_y in range(-glow_radius, glow_radius + 1):
@@ -207,29 +183,22 @@ class PremiumThumbnailGenerator:
                     distance = math.sqrt(offset_x**2 + offset_y**2)
                     if distance <= glow_radius:
                         alpha = int(100 * (1 - distance / glow_radius))
-                        text_draw.text((x + offset_x, y + offset_y), text, font=font, 
+                        text_draw.text((x + offset_x, y + offset_y), text, font=font,
                                      fill=(*glow_color, alpha))
-        
-        # Add main shadow
-        text_draw.text((x + shadow_offset[0], y + shadow_offset[1]), text, 
+
+        text_draw.text((x + shadow_offset[0], y + shadow_offset[1]), text,
                       font=font, fill=(*shadow_color, 150))
-        
-        # Add main text
+
         text_draw.text((x, y), text, font=font, fill=fill_color)
-        
-        # Composite onto background
+
         background = Image.alpha_composite(background.convert('RGBA'), text_layer)
         return background
 
     def create_premium_ui_elements(self, background, accent_color):
-        """Add premium UI elements like play button and controls"""
         draw = ImageDraw.Draw(background)
-        
-        # Modern play button with glow
         play_center_x, play_center_y = 640, 500
         play_radius = 40
-        
-        # Glow effect for play button
+
         for i in range(20, 0, -2):
             alpha = int(20 * (i / 20))
             draw.ellipse(
@@ -237,22 +206,20 @@ class PremiumThumbnailGenerator:
                  play_center_x + play_radius + i, play_center_y + play_radius + i),
                 fill=(*accent_color, alpha)
             )
-        
-        # Main play button
+
         draw.ellipse(
             (play_center_x - play_radius, play_center_y - play_radius,
              play_center_x + play_radius, play_center_y + play_radius),
             fill=(255, 255, 255, 220)
         )
-        
-        # Play triangle
+
         triangle_points = [
             (play_center_x - 15, play_center_y - 20),
             (play_center_x - 15, play_center_y + 20),
             (play_center_x + 20, play_center_y)
         ]
         draw.polygon(triangle_points, fill=accent_color)
-        
+
         return background
 
     async def generate_premium_thumbnail(self, videoid: str):
@@ -261,18 +228,15 @@ class PremiumThumbnailGenerator:
             if os.path.isfile(cache_path):
                 return cache_path
 
-            # Get video information
-            url = f"https://www.youtube.com/watch?v={videoid}"
-            results = VideosSearch(url, limit=1)
-            video_data = (await results.next())["result"][0]
-            
+            # ✅ Get video info directly by ID
+            video_data = (await Video.getInfo(videoid))["video"]
+
             title = re.sub(r"\W+", " ", video_data.get("title", "Untitled")).title()
             duration = video_data.get("duration", "Live")
             thumbnail_url = video_data["thumbnails"][0]["url"].split("?")[0]
             views = video_data.get("viewCount", {}).get("short", "Unknown Views")
             channel = video_data.get("channel", {}).get("name", "Unknown Channel")
 
-            # Download thumbnail
             async with aiohttp.ClientSession() as session:
                 async with session.get(thumbnail_url) as resp:
                     if resp.status == 200:
@@ -281,32 +245,26 @@ class PremiumThumbnailGenerator:
                         async with aiofiles.open(temp_path, mode="wb") as f:
                             await f.write(content)
 
-            # Load and process thumbnail
             youtube_img = Image.open(temp_path)
-            
-            # Create premium background
+
             gradient_colors = random.sample(list(self.modern_colors.values()), 3)
             background = self.generate_premium_gradient(
-                self.canvas_width, self.canvas_height, 
+                self.canvas_width, self.canvas_height,
                 gradient_colors, "diagonal"
             )
-            
-            # Add glassmorphism overlay
+
             glass_overlay = self.create_glassmorphism_effect(
-                self.canvas_width, self.canvas_height, 
+                self.canvas_width, self.canvas_height,
                 gradient_colors[0], blur_radius=50
             )
             background = Image.alpha_composite(background.convert('RGBA'), glass_overlay)
-            
-            # Create neon circular thumbnail
+
             circular_thumb, accent_color = self.create_neon_border_circle(youtube_img, 300, glow_intensity=20)
-            
-            # Position circular thumbnail
+
             thumb_x = 100
             thumb_y = (self.canvas_height - circular_thumb.height) // 2
             background.paste(circular_thumb, (thumb_x, thumb_y), circular_thumb)
-            
-            # Load fonts (fallback to default if not available)
+
             try:
                 title_font = ImageFont.truetype("assets/font3.ttf", 52)
                 subtitle_font = ImageFont.truetype("assets/font2.ttf", 28)
@@ -315,26 +273,23 @@ class PremiumThumbnailGenerator:
                 title_font = ImageFont.load_default()
                 subtitle_font = ImageFont.load_default()
                 info_font = ImageFont.load_default()
-            
-            # Add text with advanced effects
+
             text_start_x = 450
             title_lines = self.smart_text_truncate(title, 40)
-            
+
             y_offset = 180
             for i, line in enumerate(title_lines):
                 background = self.draw_text_with_advanced_shadow(
                     background, (text_start_x, y_offset + i * 60), line,
                     title_font, (255, 255, 255), glow_color=accent_color, glow_radius=3
                 )
-            
-            # Channel and views info
+
             info_text = f"🎵 {channel} • {views}"
             background = self.draw_text_with_advanced_shadow(
                 background, (text_start_x, y_offset + len(title_lines) * 60 + 20),
                 info_text, subtitle_font, (200, 200, 200)
             )
-            
-            # Modern progress bar
+
             if duration != "Live":
                 progress = random.uniform(0.2, 0.8)
                 progress_bar = self.create_animated_progress_bar(
@@ -342,8 +297,7 @@ class PremiumThumbnailGenerator:
                     500, 12, progress, accent_color
                 )
                 background.paste(progress_bar, (text_start_x - 10, y_offset + len(title_lines) * 60 + 70), progress_bar)
-                
-                # Time indicators
+
                 background = self.draw_text_with_advanced_shadow(
                     background, (text_start_x, y_offset + len(title_lines) * 60 + 110),
                     "00:00", info_font, (180, 180, 180)
@@ -353,50 +307,42 @@ class PremiumThumbnailGenerator:
                     duration, info_font, (180, 180, 180)
                 )
             else:
-                # Live indicator
                 live_bg = Image.new('RGBA', (80, 30), (*accent_color, 255))
                 background.paste(live_bg, (text_start_x, y_offset + len(title_lines) * 60 + 80), live_bg)
                 background = self.draw_text_with_advanced_shadow(
                     background, (text_start_x + 15, y_offset + len(title_lines) * 60 + 85),
                     "LIVE", info_font, (255, 255, 255)
                 )
-            
-            # Add premium UI elements
+
             background = self.create_premium_ui_elements(background, accent_color)
-            
-            # Add subtle noise texture for premium feel
+
             noise = Image.new('RGBA', (self.canvas_width, self.canvas_height), (0, 0, 0, 0))
             noise_pixels = []
             for _ in range(self.canvas_width * self.canvas_height):
-                if random.random() < 0.02:  # 2% noise
+                if random.random() < 0.02:
                     alpha = random.randint(10, 30)
                     noise_pixels.append((255, 255, 255, alpha))
                 else:
                     noise_pixels.append((0, 0, 0, 0))
             noise.putdata(noise_pixels)
             background = Image.alpha_composite(background, noise)
-            
-            # Save final thumbnail
+
             background.save(cache_path, "PNG", quality=95)
-            
-            # Cleanup
             os.remove(temp_path)
-            
+
             return cache_path
-            
+
         except Exception as e:
             logging.error(f"Error generating premium thumbnail for {videoid}: {e}")
             return None
 
-# Main function with original name for compatibility
+# Main function
 async def gen_thumb(videoid: str):
-    """Main function to generate premium thumbnail - maintains original function name"""
     generator = PremiumThumbnailGenerator()
     return await generator.generate_premium_thumbnail(videoid)
 
-# Alternative function name for premium version
+# Alternative alias
 async def gen_premium_thumb(videoid: str):
-    """Alternative function name for premium thumbnail"""
     return await gen_thumb(videoid)
 
 # ===========================================
