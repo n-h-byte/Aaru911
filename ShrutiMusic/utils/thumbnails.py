@@ -1,28 +1,3 @@
-# Copyright (c) 2025 Nand Yaduwanshi <NoxxOP>
-# Location: Supaul, Bihar
-#
-# All rights reserved.
-#
-# This code is the intellectual property of Nand Yaduwanshi.
-# You are not allowed to copy, modify, redistribute, or use this
-# code for commercial or personal projects without explicit permission.
-#
-# Allowed:
-# - Forking for personal learning
-# - Submitting improvements via pull requests
-#
-# Not Allowed:
-# - Claiming this code as your own
-# - Re-uploading without credit or permission
-# - Selling or using commercially
-#
-# Contact for permissions:
-# Email: badboy809075@gmail.com
-
-
-# ATLEAST GIVE CREDITS IF YOU STEALING :(((((((((((((((((((((((((((((((((((((
-# ELSE NO FURTHER PUBLIC THUMBNAIL UPDATES
-
 import random
 import logging
 import os
@@ -35,250 +10,130 @@ from youtubesearchpython.__future__ import VideosSearch
 logging.basicConfig(level=logging.INFO)
 
 def changeImageSize(maxWidth, maxHeight, image):
-    widthRatio = maxWidth / image.size[0]
-    heightRatio = maxHeight / image.size[1]
-    newWidth = int(widthRatio * image.size[0])
-    newHeight = int(heightRatio * image.size[1])
-    newImage = image.resize((newWidth, newHeight))
-    return newImage
+    ratio = min(maxWidth / image.size[0], maxHeight / image.size[1])
+    return image.resize((int(image.size[0] * ratio), int(image.size[1] * ratio)))
 
-def truncate(text):
-    list = text.split(" ")
-    text1 = ""
-    text2 = ""    
-    for i in list:
-        if len(text1) + len(i) < 30:        
-            text1 += " " + i
-        elif len(text2) + len(i) < 30:       
-            text2 += " " + i
-
-    text1 = text1.strip()
-    text2 = text2.strip()     
-    return [text1,text2]
+def truncate(text, max_len=32):
+    words = text.split(" ")
+    text1, text2 = "", ""
+    for w in words:
+        if len(text1) + len(w) < max_len:
+            text1 += " " + w
+        elif len(text2) + len(w) < max_len:
+            text2 += " " + w
+    return [text1.strip(), text2.strip()]
 
 def random_color():
-    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    return (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
 
-def generate_gradient(width, height, start_color, end_color):
-    base = Image.new('RGBA', (width, height), start_color)
-    top = Image.new('RGBA', (width, height), end_color)
+def generate_gradient(width, height, colors):
+    """Multi-color gradient"""
+    base = Image.new('RGB', (width, height), colors[0])
+    top = Image.new('RGB', (width, height), colors[-1])
     mask = Image.new('L', (width, height))
     mask_data = []
     for y in range(height):
-        mask_data.extend([int(60 * (y / height))] * width)
+        mask_data.extend([int(255 * (y / height))] * width)
     mask.putdata(mask_data)
     base.paste(top, (0, 0), mask)
     return base
 
-def add_border(image, border_width, border_color):
-    width, height = image.size
-    new_width = width + 2 * border_width
-    new_height = height + 2 * border_width
-    new_image = Image.new("RGBA", (new_width, new_height), border_color)
-    new_image.paste(image, (border_width, border_width))
-    return new_image
+def draw_glow_text(draw, text, position, font, glow_color, text_color):
+    x, y = position
+    for offset in range(1, 6):  # glow thickness
+        draw.text((x - offset, y), text, font=font, fill=glow_color)
+        draw.text((x + offset, y), text, font=font, fill=glow_color)
+        draw.text((x, y - offset), text, font=font, fill=glow_color)
+        draw.text((x, y + offset), text, font=font, fill=glow_color)
+    draw.text(position, text, font=font, fill=text_color)
 
-def crop_center_circle(img, output_size, border, border_color, crop_scale=1.5):
-    half_the_width = img.size[0] / 2
-    half_the_height = img.size[1] / 2
-    larger_size = int(output_size * crop_scale)
-    img = img.crop(
-        (
-            half_the_width - larger_size/2,
-            half_the_height - larger_size/2,
-            half_the_width + larger_size/2,
-            half_the_height + larger_size/2
-        )
-    )
-    
-    img = img.resize((output_size - 2*border, output_size - 2*border))
-    
-    
-    final_img = Image.new("RGBA", (output_size, output_size), border_color)
-    
-    
-    mask_main = Image.new("L", (output_size - 2*border, output_size - 2*border), 0)
-    draw_main = ImageDraw.Draw(mask_main)
-    draw_main.ellipse((0, 0, output_size - 2*border, output_size - 2*border), fill=255)
-    
-    final_img.paste(img, (border, border), mask_main)
-    
-    
-    mask_border = Image.new("L", (output_size, output_size), 0)
-    draw_border = ImageDraw.Draw(mask_border)
-    draw_border.ellipse((0, 0, output_size, output_size), fill=255)
-    
-    result = Image.composite(final_img, Image.new("RGBA", final_img.size, (0, 0, 0, 0)), mask_border)
-    
-    return result
-
-def draw_text_with_shadow(background, draw, position, text, font, fill, shadow_offset=(3, 3), shadow_blur=5):
-    
-    shadow = Image.new('RGBA', background.size, (0, 0, 0, 0))
-    shadow_draw = ImageDraw.Draw(shadow)
-    
-    
-    shadow_draw.text(position, text, font=font, fill="black")
-    
-    
-    shadow = shadow.filter(ImageFilter.GaussianBlur(radius=shadow_blur))
-    
-    
-    background.paste(shadow, shadow_offset, shadow)
-    
-    
-    draw.text(position, text, font=font, fill=fill)
+def add_outer_glow(img, glow_color=(255, 0, 0), blur_radius=25):
+    glow = img.copy().convert("RGBA")
+    r, g, b, a = glow.split()
+    glow = Image.merge("RGBA", (Image.new("L", a.size, glow_color[0]),
+                                Image.new("L", a.size, glow_color[1]),
+                                Image.new("L", a.size, glow_color[2]), a))
+    glow = glow.filter(ImageFilter.GaussianBlur(blur_radius))
+    bg = Image.new("RGBA", (img.size[0]+100, img.size[1]+100), (0,0,0,0))
+    bg.paste(glow, (50,50), glow)
+    bg.paste(img, (50,50), img)
+    return bg
 
 async def gen_thumb(videoid: str):
     try:
-        if os.path.isfile(f"cache/{videoid}_v4.png"):
-            return f"cache/{videoid}_v4.png"
+        if not os.path.exists("cache"):
+            os.makedirs("cache")
 
         url = f"https://www.youtube.com/watch?v={videoid}"
         results = VideosSearch(url, limit=1)
         for result in (await results.next())["result"]:
-            title = result.get("title")
-            if title:
-                title = re.sub("\W+", " ", title).title()
-            else:
-                title = "Unsupported Title"
-            duration = result.get("duration")
-            if not duration:
-                duration = "Live"
-            thumbnail_data = result.get("thumbnails")
-            if thumbnail_data:
-                thumbnail = thumbnail_data[0]["url"].split("?")[0]
-            else:
-                thumbnail = None
-            views_data = result.get("viewCount")
-            if views_data:
-                views = views_data.get("short")
-                if not views:
-                    views = "Unknown Views"
-            else:
-                views = "Unknown Views"
-            channel_data = result.get("channel")
-            if channel_data:
-                channel = channel_data.get("name")
-                if not channel:
-                    channel = "Unknown Channel"
-            else:
-                channel = "Unknown Channel"
+            title = re.sub("\W+", " ", result.get("title", "Unknown Title")).title()
+            duration = result.get("duration") or "Live"
+            thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+            views = result.get("viewCount", {}).get("short", "Unknown Views")
+            channel = result.get("channel", {}).get("name", "Unknown Channel")
 
-        
+        # Download thumbnail
         async with aiohttp.ClientSession() as session:
             async with session.get(thumbnail) as resp:
-        
-                content = await resp.read()
                 if resp.status == 200:
-                    content_type = resp.headers.get('Content-Type')
-                    if 'jpeg' in content_type or 'jpg' in content_type:
-                        extension = 'jpg'
-                    elif 'png' in content_type:
-                        extension = 'png'
-                    else:
-                        logging.error(f"Unexpected content type: {content_type}")
-                        return None
-
                     filepath = f"cache/thumb{videoid}.png"
                     f = await aiofiles.open(filepath, mode="wb")
                     await f.write(await resp.read())
                     await f.close()
-                    # os.system(f"file {filepath}")
-                    
-        
-        image_path = f"cache/thumb{videoid}.png"
-        youtube = Image.open(image_path)
-        image1 = changeImageSize(1280, 720, youtube)
-        
-        image2 = image1.convert("RGBA")
-        background = image2.filter(filter=ImageFilter.BoxBlur(20))
-        enhancer = ImageEnhance.Brightness(background)
-        background = enhancer.enhance(0.6)
 
-        
-        start_gradient_color = random_color()
-        end_gradient_color = random_color()
-        gradient_image = generate_gradient(1280, 720, start_gradient_color, end_gradient_color)
-        background = Image.blend(background, gradient_image, alpha=0.2)
-        
-        draw = ImageDraw.Draw(background)
-        arial = ImageFont.truetype("ShrutiMusic/assets/font2.ttf", 30)
-        font = ImageFont.truetype("ShrutiMusic/assets/font.ttf", 30)
-        title_font = ImageFont.truetype("ShrutiMusic/assets/font3.ttf", 45)
+        # Base images
+        youtube = Image.open(filepath).convert("RGBA")
+        bg = changeImageSize(1280, 720, youtube).filter(ImageFilter.GaussianBlur(25))
+        enhancer = ImageEnhance.Brightness(bg)
+        bg = enhancer.enhance(0.5)
 
+        # Neon gradient
+        gradient = generate_gradient(1280, 720, [random_color(), random_color(), random_color()])
+        gradient = gradient.convert("RGBA")
+        bg = Image.blend(bg, gradient, 0.4)
 
-        circle_thumbnail = crop_center_circle(youtube, 400, 20, start_gradient_color)
-        circle_thumbnail = circle_thumbnail.resize((400, 400))
-        circle_position = (120, 160)
-        background.paste(circle_thumbnail, circle_position, circle_thumbnail)
+        draw = ImageDraw.Draw(bg)
+        title_font = ImageFont.truetype("ShrutiMusic/assets/font3.ttf", 60)
+        info_font = ImageFont.truetype("ShrutiMusic/assets/font2.ttf", 32)
 
-        text_x_position = 565
-        title1 = truncate(title)
-        draw_text_with_shadow(background, draw, (text_x_position, 180), title1[0], title_font, (255, 255, 255))
-        draw_text_with_shadow(background, draw, (text_x_position, 230), title1[1], title_font, (255, 255, 255))
-        draw_text_with_shadow(background, draw, (text_x_position, 320), f"{channel}  |  {views[:23]}", arial, (255, 255, 255))
+        # Circular glow thumbnail
+        circle = youtube.resize((420,420))
+        circle = add_outer_glow(circle, glow_color=random_color())
+        bg.paste(circle, (80,150), circle)
 
+        # Text with glow
+        t1, t2 = truncate(title)
+        draw_glow_text(draw, t1, (550,180), title_font, (255,0,100), (255,255,255))
+        if t2:
+            draw_glow_text(draw, t2, (550,250), title_font, (255,0,100), (255,255,255))
+        draw_glow_text(draw, f"{channel}  |  {views}", (550,340), info_font, (0,255,255), (255,255,255))
 
-        line_length = 580  
-        line_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-
+        # Progress bar / Live bar
+        bar_x, bar_y = 550, 420
+        bar_len = 600
         if duration != "Live":
-            color_line_percentage = random.uniform(0.15, 0.85)
-            color_line_length = int(line_length * color_line_percentage)
-            white_line_length = line_length - color_line_length
-
-            start_point_color = (text_x_position, 380)
-            end_point_color = (text_x_position + color_line_length, 380)
-            draw.line([start_point_color, end_point_color], fill=line_color, width=9)
-        
-            start_point_white = (text_x_position + color_line_length, 380)
-            end_point_white = (text_x_position + line_length, 380)
-            draw.line([start_point_white, end_point_white], fill="white", width=8)
-        
-            circle_radius = 10 
-            circle_position = (end_point_color[0], end_point_color[1])
-            draw.ellipse([circle_position[0] - circle_radius, circle_position[1] - circle_radius,
-                      circle_position[0] + circle_radius, circle_position[1] + circle_radius], fill=line_color)
-    
+            draw.rectangle([bar_x, bar_y, bar_x+bar_len, bar_y+12], fill=(80,80,80))
+            prog_len = random.randint(int(bar_len*0.2), int(bar_len*0.8))
+            grad_col = random_color()
+            draw.rectangle([bar_x, bar_y, bar_x+prog_len, bar_y+12], fill=grad_col)
+            draw.ellipse([bar_x+prog_len-10, bar_y-10, bar_x+prog_len+10, bar_y+20], fill=grad_col)
         else:
-            line_color = (255, 0, 0)
-            start_point_color = (text_x_position, 380)
-            end_point_color = (text_x_position + line_length, 380)
-            draw.line([start_point_color, end_point_color], fill=line_color, width=9)
-        
-            circle_radius = 10 
-            circle_position = (end_point_color[0], end_point_color[1])
-            draw.ellipse([circle_position[0] - circle_radius, circle_position[1] - circle_radius,
-                          circle_position[0] + circle_radius, circle_position[1] + circle_radius], fill=line_color)
+            draw.rectangle([bar_x, bar_y, bar_x+bar_len, bar_y+12], fill=(255,0,0))
 
-        draw_text_with_shadow(background, draw, (text_x_position, 400), "00:00", arial, (255, 255, 255))
-        draw_text_with_shadow(background, draw, (1080, 400), duration, arial, (255, 255, 255))
-        
-        play_icons = Image.open("ShrutiMusic/assets/play_icons.png")
-        play_icons = play_icons.resize((580, 62))
-        background.paste(play_icons, (text_x_position, 450), play_icons)
+        draw_glow_text(draw, "00:00", (550,450), info_font, (0,0,0), (255,255,255))
+        draw_glow_text(draw, duration, (1100,450), info_font, (0,0,0), (255,255,255))
 
-        os.remove(f"cache/thumb{videoid}.png")
+        # Play button overlay
+        play_icon = Image.open("ShrutiMusic/assets/play_icons.png").resize((600,80))
+        play_icon = add_outer_glow(play_icon, glow_color=(255,255,0))
+        bg.paste(play_icon, (550,500), play_icon)
 
-        background_path = f"cache/{videoid}_v4.png"
-        background.save(background_path)
-        
-        return background_path
+        out_path = f"cache/{videoid}_tadka.png"
+        bg.save(out_path)
+        os.remove(filepath)
+        return out_path
 
     except Exception as e:
-        logging.error(f"Error generating thumbnail for video {videoid}: {e}")
-        traceback.print_exc()
+        logging.error(f"Error: {e}")
         return None
-
-
-# ©️ Copyright Reserved - @NoxxOP  Nand Yaduwanshi
-
-# ===========================================
-# ©️ 2025 Nand Yaduwanshi (aka @NoxxOP)
-# 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
-# 📢 Telegram Channel : https://t.me/ShrutiBots
-# ===========================================
-
-
-# ❤️ Love From ShrutiBots 
