@@ -388,11 +388,16 @@ class PremiumThumbnailGenerator:
             logging.error(f"Error generating premium thumbnail for {videoid}: {e}")
             return None
 
-# Usage function
-async def gen_premium_thumb(videoid: str):
-    """Main function to generate premium thumbnail"""
+# Main function with original name for compatibility
+async def gen_thumb(videoid: str):
+    """Main function to generate premium thumbnail - maintains original function name"""
     generator = PremiumThumbnailGenerator()
     return await generator.generate_premium_thumbnail(videoid)
+
+# Alternative function name for premium version
+async def gen_premium_thumb(videoid: str):
+    """Alternative function name for premium thumbnail"""
+    return await gen_thumb(videoid)
 
 # ===========================================
 # ©️ 2025 Nand Yaduwanshi (aka @NoxxOP) - Enhanced Premium Version
