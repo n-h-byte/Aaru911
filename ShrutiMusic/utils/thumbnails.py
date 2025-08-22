@@ -1,7 +1,16 @@
+# Copyright (c) 2025 Nand Yaduwanshi <NoxxOP>
+# Location: Supaul, Bihar
+#
+# All rights reserved.
+#
+# Premium upgraded thumbnail generator
+# Modern neon style with gradient, glow, badges, and play icons
+
 import random
 import logging
 import os
 import re
+import traceback
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
@@ -9,131 +18,151 @@ from youtubesearchpython.__future__ import VideosSearch
 
 logging.basicConfig(level=logging.INFO)
 
-def changeImageSize(maxWidth, maxHeight, image):
-    ratio = min(maxWidth / image.size[0], maxHeight / image.size[1])
-    return image.resize((int(image.size[0] * ratio), int(image.size[1] * ratio)))
+# -----------------------------
+# Helper Functions
+# -----------------------------
+def change_image_size(maxWidth, maxHeight, image):
+    ratio = min(maxWidth / image.width, maxHeight / image.height)
+    return image.resize((int(image.width * ratio), int(image.height * ratio)))
 
-def truncate(text, max_len=32):
-    words = text.split(" ")
+def truncate(text):
+    words = text.split()
     text1, text2 = "", ""
     for w in words:
-        if len(text1) + len(w) < max_len:
+        if len(text1) + len(w) < 30:
             text1 += " " + w
-        elif len(text2) + len(w) < max_len:
+        elif len(text2) + len(w) < 30:
             text2 += " " + w
-    return [text1.strip(), text2.strip()]
+    return text1.strip(), text2.strip()
 
 def random_color():
-    return (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
+    return (random.randint(50,255), random.randint(50,255), random.randint(50,255))
 
-def generate_gradient(width, height, colors):
-    """Multi-color gradient"""
-    base = Image.new('RGB', (width, height), colors[0])
-    top = Image.new('RGB', (width, height), colors[-1])
-    mask = Image.new('L', (width, height))
-    mask_data = []
-    for y in range(height):
-        mask_data.extend([int(255 * (y / height))] * width)
-    mask.putdata(mask_data)
-    base.paste(top, (0, 0), mask)
+def generate_advanced_gradient(width, height):
+    base = Image.new('RGBA', (width, height), (0,0,0,255))
+    for i in range(3):
+        start_color = random_color()
+        end_color = random_color()
+        layer = Image.new('RGBA', (width, height), start_color)
+        top = Image.new('RGBA', (width, height), end_color)
+        mask = Image.new('L', (width, height))
+        mask_data = [int((y/height)*255) for y in range(height) for _ in range(width)]
+        mask.putdata(mask_data)
+        layer.paste(top, (0,0), mask)
+        base = Image.alpha_composite(base, layer)
     return base
 
-def draw_glow_text(draw, text, position, font, glow_color, text_color):
-    x, y = position
-    for offset in range(1, 6):  # glow thickness
-        draw.text((x - offset, y), text, font=font, fill=glow_color)
-        draw.text((x + offset, y), text, font=font, fill=glow_color)
-        draw.text((x, y - offset), text, font=font, fill=glow_color)
-        draw.text((x, y + offset), text, font=font, fill=glow_color)
-    draw.text(position, text, font=font, fill=text_color)
+def crop_circle_with_glow(img, size, border_width=15):
+    img = img.resize((size-border_width*2, size-border_width*2))
+    mask = Image.new('L', (size-border_width*2, size-border_width*2), 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((0,0,size-border_width*2,size-border_width*2), fill=255)
+    img.putalpha(mask)
+    
+    final = Image.new("RGBA", (size, size), (0,0,0,0))
+    border = Image.new("RGBA", (size, size), (0,0,0,0))
+    draw_border = ImageDraw.Draw(border)
+    draw_border.ellipse((0,0,size,size), outline=random_color(), width=border_width)
+    border = border.filter(ImageFilter.GaussianBlur(8))
+    final.paste(border, (0,0), border)
+    final.paste(img, (border_width,border_width), img)
+    return final
 
-def add_outer_glow(img, glow_color=(255, 0, 0), blur_radius=25):
-    glow = img.copy().convert("RGBA")
-    r, g, b, a = glow.split()
-    glow = Image.merge("RGBA", (Image.new("L", a.size, glow_color[0]),
-                                Image.new("L", a.size, glow_color[1]),
-                                Image.new("L", a.size, glow_color[2]), a))
-    glow = glow.filter(ImageFilter.GaussianBlur(blur_radius))
-    bg = Image.new("RGBA", (img.size[0]+100, img.size[1]+100), (0,0,0,0))
-    bg.paste(glow, (50,50), glow)
-    bg.paste(img, (50,50), img)
-    return bg
+def draw_text_neon(background, draw, position, text, font, fill=(255,255,255)):
+    # Neon glow effect
+    for r in [6,4,2]:
+        glow = Image.new('RGBA', background.size, (0,0,0,0))
+        glow_draw = ImageDraw.Draw(glow)
+        glow_draw.text(position, text, font=font, fill=fill)
+        glow = glow.filter(ImageFilter.GaussianBlur(r))
+        background.paste(glow, (0,0), glow)
+    draw.text(position, text, font=font, fill=fill)
 
+def draw_badge(background, text, position, size=(120,40)):
+    badge = Image.new('RGBA', size, (255,0,150,220))
+    draw = ImageDraw.Draw(badge)
+    draw.rounded_rectangle((0,0,size[0],size[1]), radius=15, fill=(255,0,150,220))
+    font = ImageFont.truetype("ShrutiMusic/assets/font2.ttf", 20)
+    draw.text((10,5), text, font=font, fill=(255,255,255))
+    background.paste(badge, position, badge)
+
+# -----------------------------
+# Main Thumbnail Generator
+# -----------------------------
 async def gen_thumb(videoid: str):
     try:
         if not os.path.exists("cache"):
             os.makedirs("cache")
+        cache_file = f"cache/{videoid}_premium.png"
+        if os.path.isfile(cache_file):
+            return cache_file
 
         url = f"https://www.youtube.com/watch?v={videoid}"
         results = VideosSearch(url, limit=1)
         for result in (await results.next())["result"]:
-            title = re.sub("\W+", " ", result.get("title", "Unknown Title")).title()
-            duration = result.get("duration") or "Live"
-            thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+            title = result.get("title") or "Unsupported Title"
+            title = re.sub("\W+", " ", title).title()
+            duration = result.get("duration") or "LIVE"
+            thumbnail_data = result.get("thumbnails")
+            thumbnail = thumbnail_data[0]["url"].split("?")[0] if thumbnail_data else None
             views = result.get("viewCount", {}).get("short", "Unknown Views")
             channel = result.get("channel", {}).get("name", "Unknown Channel")
 
-        # Download thumbnail
+        # Fetch thumbnail
         async with aiohttp.ClientSession() as session:
             async with session.get(thumbnail) as resp:
-                if resp.status == 200:
-                    filepath = f"cache/thumb{videoid}.png"
-                    f = await aiofiles.open(filepath, mode="wb")
-                    await f.write(await resp.read())
-                    await f.close()
+                if resp.status != 200:
+                    return None
+                content = await resp.read()
+                filepath = f"cache/thumb_{videoid}.png"
+                async with aiofiles.open(filepath, "wb") as f:
+                    await f.write(content)
 
-        # Base images
-        youtube = Image.open(filepath).convert("RGBA")
-        bg = changeImageSize(1280, 720, youtube).filter(ImageFilter.GaussianBlur(25))
-        enhancer = ImageEnhance.Brightness(bg)
-        bg = enhancer.enhance(0.5)
+        youtube_img = Image.open(filepath)
+        youtube_img = change_image_size(1280, 720, youtube_img)
+        background = youtube_img.convert("RGBA").filter(ImageFilter.BoxBlur(20))
+        background = ImageEnhance.Brightness(background).enhance(0.6)
 
-        # Neon gradient
-        gradient = generate_gradient(1280, 720, [random_color(), random_color(), random_color()])
-        gradient = gradient.convert("RGBA")
-        bg = Image.blend(bg, gradient, 0.4)
+        gradient = generate_advanced_gradient(1280, 720)
+        background = Image.blend(background, gradient, alpha=0.25)
+        draw = ImageDraw.Draw(background)
 
-        draw = ImageDraw.Draw(bg)
-        title_font = ImageFont.truetype("ShrutiMusic/assets/font3.ttf", 60)
-        info_font = ImageFont.truetype("ShrutiMusic/assets/font2.ttf", 32)
+        # Fonts
+        arial = ImageFont.truetype("ShrutiMusic/assets/font2.ttf", 30)
+        title_font = ImageFont.truetype("ShrutiMusic/assets/font3.ttf", 50)
 
-        # Circular glow thumbnail
-        circle = youtube.resize((420,420))
-        circle = add_outer_glow(circle, glow_color=random_color())
-        bg.paste(circle, (80,150), circle)
+        # Circle thumbnail
+        circle_thumb = crop_circle_with_glow(youtube_img, 400, 20)
+        background.paste(circle_thumb, (120,160), circle_thumb)
 
-        # Text with glow
-        t1, t2 = truncate(title)
-        draw_glow_text(draw, t1, (550,180), title_font, (255,0,100), (255,255,255))
-        if t2:
-            draw_glow_text(draw, t2, (550,250), title_font, (255,0,100), (255,255,255))
-        draw_glow_text(draw, f"{channel}  |  {views}", (550,340), info_font, (0,255,255), (255,255,255))
+        # Draw text
+        text_x = 565
+        title1, title2 = truncate(title)
+        draw_text_neon(background, draw, (text_x,180), title1, title_font)
+        draw_text_neon(background, draw, (text_x,250), title2, title_font)
+        draw_text_neon(background, draw, (text_x, 350), f"{channel}  |  {views[:23]}", arial)
 
-        # Progress bar / Live bar
-        bar_x, bar_y = 550, 420
-        bar_len = 600
-        if duration != "Live":
-            draw.rectangle([bar_x, bar_y, bar_x+bar_len, bar_y+12], fill=(80,80,80))
-            prog_len = random.randint(int(bar_len*0.2), int(bar_len*0.8))
-            grad_col = random_color()
-            draw.rectangle([bar_x, bar_y, bar_x+prog_len, bar_y+12], fill=grad_col)
-            draw.ellipse([bar_x+prog_len-10, bar_y-10, bar_x+prog_len+10, bar_y+20], fill=grad_col)
+        # Draw badges
+        if duration.lower() == "live":
+            draw_badge(background, "LIVE", (text_x, 400))
         else:
-            draw.rectangle([bar_x, bar_y, bar_x+bar_len, bar_y+12], fill=(255,0,0))
+            draw_badge(background, "TRENDING", (text_x, 400))
 
-        draw_glow_text(draw, "00:00", (550,450), info_font, (0,0,0), (255,255,255))
-        draw_glow_text(draw, duration, (1100,450), info_font, (0,0,0), (255,255,255))
+        # Play icon
+        play_icon = Image.open("ShrutiMusic/assets/play_icons.png").resize((580,62))
+        background.paste(play_icon, (text_x, 450), play_icon)
 
-        # Play button overlay
-        play_icon = Image.open("ShrutiMusic/assets/play_icons.png").resize((600,80))
-        play_icon = add_outer_glow(play_icon, glow_color=(255,255,0))
-        bg.paste(play_icon, (550,500), play_icon)
-
-        out_path = f"cache/{videoid}_tadka.png"
-        bg.save(out_path)
         os.remove(filepath)
-        return out_path
+        background.save(cache_file)
+        return cache_file
 
     except Exception as e:
-        logging.error(f"Error: {e}")
+        logging.error(f"Error generating thumbnail for video {videoid}: {e}")
+        traceback.print_exc()
         return None
+
+# ===========================================
+# ©️ 2025 Nand Yaduwanshi (aka @NoxxOP)
+# 🔗 GitHub : https://github.com/NoxxOP/ShrutiMusic
+# 📢 Telegram Channel : https://t.me/ShrutiBots
+# ===========================================
