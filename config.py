@@ -63,13 +63,13 @@ GIT_TOKEN = os.getenv("GIT_TOKEN", None)
 # 🔗 Support Links
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SUPPORT_CHANNEL = os.getenv("SUPPORT_CHANNEL", "https://t.me/ShrutiBots")
-SUPPORT_GROUP = os.getenv("SUPPORT_GROUP", "https://t.me/ShrutiBotSupport")
-INSTAGRAM = os.getenv("INSTAGRAM", "https://instagram.com/yaduwanshi_nand")
-YOUTUBE = os.getenv("YOUTUBE", "https://youtube.com/@NandEditz")
+SUPPORT_CHANNEL = os.getenv("SUPPORT_CHANNEL", "https://t.me/Bot_Sappoter")
+SUPPORT_GROUP = os.getenv("SUPPORT_GROUP", "https://t.me/JAWANON_KI_TOLI")
+INSTAGRAM = os.getenv("INSTAGRAM", "https://www.instagram.com/official_known_06")
+YOUTUBE = os.getenv("YOUTUBE", "https://t.me/JAWANON_KI_TOLI")
 GITHUB = os.getenv("GITHUB", "https://github.com/NoxxOP")
-DONATE = os.getenv("DONATE", "https://t.me/ShrutiBots/91")
-PRIVACY_LINK = os.getenv("PRIVACY_LINK", "https://graph.org/Privacy-Policy-05-01-30")
+DONATE = os.getenv("DONATE", "https://t.me/JAWANON_KI_TOLI")
+PRIVACY_LINK = os.getenv("PRIVACY_LINK", "https://t.me/JAWANON_KI_TOLI")
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ⏱️ Duration & Playlist Settings
